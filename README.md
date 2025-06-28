@@ -1,4 +1,4 @@
-A detailed tutorial in ordinary linear modeling that walks through both the conceptual foundations of OLMs as well as a practical application using the Diamonds dataset in R. The entire tutorial is written in a quarto notebook and the rendered .html file can be viewed [here](https://jiroop.github.io/OLM_tutorial/). 
+A detailed tutorial in ordinary linear modeling (OLM) that walks through both the conceptual foundations of OLMs as well as a practical application using the Diamonds dataset in R. The entire tutorial is written in a quarto notebook and the rendered .html file can be viewed [here](https://jiroop.github.io/OLM_tutorial/). 
 
 **The notebook can be run modified locally as follows:**
 
