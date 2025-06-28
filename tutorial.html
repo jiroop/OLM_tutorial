@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>tutorial</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="tutorial_files/libs/clipboard/clipboard.min.js"></script>
+<script src="tutorial_files/libs/quarto-html/quarto.js"></script>
+<script src="tutorial_files/libs/quarto-html/popper.min.js"></script>
+<script src="tutorial_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="tutorial_files/libs/quarto-html/anchor.min.js"></script>
+<link href="tutorial_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="tutorial_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="tutorial_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="tutorial_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="tutorial_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="tutorial_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="tutorial_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="part-1-what-is-a-linear-model-what-is-a-non-linear-model" class="level1">
+<h1>Part 1: What is a linear model? What is a non-linear model?</h1>
+<section id="the-linear-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-linear-model">The linear model</h2>
+<p>When statisticians say “linear model,” they mean linear in parameters, not linear in the relationship between variables. What does this mean?</p>
+<p>A model is linear in parameters when it can be written as Y = β₀ + β₁X₁ + β₂X₂ + … + βₚXₚ + ε, where each parameter (β) appears exactly once and is multiplied by a variable or constant. This allows construction of a design matrix where Y = Xβ + ε, enabling direct mathematical calculation of an explicit solution.</p>
+<p>Critically, a linear model can still produce curved relationships, as in the examples below:</p>
+<ul>
+<li><p><strong>Y = β₀ + β₁X + β₂X²</strong> – quadratic - still linear in parameters!</p></li>
+<li><p><strong>Y = β₀ + β₁log(X) + β₂sin(X)</strong> – curved - still linear in parameters!</p></li>
+<li><p><strong>Y = β₀ + β₁X₁ + β₂X₂ + β₃X₁X₂</strong> – interactions - still linear in parameters!</p></li>
+<li><p><strong>Y = β₀X^β₁</strong> – power-law - becomes linear: <strong>log(Y) = log(β₀) + β₁log(X)</strong></p></li>
+<li><p><strong>Y = β₀e^(β₁X)</strong> – exponential - becomes linear: <strong>log(Y) = log(β₀) + β₁X</strong></p></li>
+</ul>
+</section>
+<section id="the-non-linear-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-non-linear-model">The non-linear model</h2>
+<p>True non-linear models have parameters that interact with each other or appear in complex ways, making it impossible to construct a simple design matrix. These models require iterative estimation algorithms that may fail to converge, thus leaving you with no solution:</p>
+<ul>
+<li><p><strong>Y = β₀(1 - e^(-β₁β₂X))</strong> – parameters β₁ and β₂ multiply within the exponential</p></li>
+<li><p><strong>Y = β₀ + β₁X / (β₂ + X)</strong> – Michaelis-Menten: parameters β₁ and β₂ interact nonlinearly</p></li>
+<li><p><strong>Y = β₀(1 - e^(-β₁β₂X))</strong> – parameters β₁ and β₂ multiply within the exponential</p></li>
+</ul>
+</section>
+<section id="what-are-the-advantages-of-linear-models" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-the-advantages-of-linear-models">What are the advantages of linear models?</h2>
+<p>Linear models dominate statistics because they offer several types of major practical advantages:</p>
+<p><strong>Mathematical:</strong> Their explicit mathematical solution guarantees a unique solution and unbiased estimators.</p>
+<p><strong>Computational:</strong> Instant estimation even with millions of observations, available in all software packages, and no convergence issues.</p>
+<p><strong>Interpretability:</strong> Each coefficient has a clear, separate meaning. Effects are additive and easy to communicate to stakeholders. This becomes less so as the model becomes more complex e.g.&nbsp;with quadratic terms, but these are still generally more interpretable than non-linear models.</p>
+<p><strong>Flexibility:</strong> Despite being “linear,” these models can capture curves (polynomials), interactions, transformations, and complex relationships through careful variable construction.</p>
+</section>
+<section id="when-to-use-non-linear-models" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-non-linear-models">When to use non-linear models?</h2>
+<p>Reserve true non-linear models for cases where:</p>
+<ul>
+<li><p>Strong theoretical justification exists (e.g., physical laws, biological processes)</p></li>
+<li><p>Linear approaches (including polynomials and transformations) genuinely fail</p></li>
+<li><p>Specific functional forms are scientifically established, such as in the case of logistic population growth or Michaelis-Menton kinetics</p></li>
+</ul>
+<section id="a-practical-rule" class="level4">
+<h4 class="anchored" data-anchor-id="a-practical-rule"><strong>A practical rule</strong></h4>
+<p>Linear models with polynomial terms, interactions, and transformations provide 90% of the flexibility of non-linear models with only 10% of the complexity. This sweet spot explains why linear modeling forms the foundation of statistical practice: you can model curved, complex relationships while maintaining mathematical guarantees and practical interpretability.</p>
+</section>
+</section>
+<section id="limitations-and-requirements-of-linear-models" class="level2">
+<h2 class="anchored" data-anchor-id="limitations-and-requirements-of-linear-models">Limitations and requirements of linear models</h2>
+<p>While linear models offer flexibility and interpretability, their validity depends on several key assumptions being met. Violating these assumptions can lead to biased estimates, incorrect standard errors, and unreliable hypothesis tests. This section covers the four primary assumptions, as well as diagnostic methods to assess whether they are violated.</p>
+<section id="assumption-1-linearity-of-parameters" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-1-linearity-of-parameters"><strong>Assumption 1 – Linearity of parameters:</strong></h4>
+<p>Assumption: It is possible to model the relationship between predictors and the response variable while maintaining linearity of parameters.</p>
+<p>How to asses this?</p>
+<p><strong>Diagnostics:</strong></p>
+<ul>
+<li><p>Residuals vs.&nbsp;Fitted Values plot: You want this to show random scatter around zero with no clear patterns. A curved pattern indicates either that your model does not sufficiently model the dataset, or, (if you have exhausted the options for modeling the data better), that there is no relationship between predictors and the response variable that can accurately be modeled with linear parameters.</p></li>
+<li><p>Component + Residual plots (aka Partial Residual plots): Plot each predictor against residuals + that predictor’s linear component. This shows you non-linear relationships between an individual predictor and the outcome variable that may be minimized or hidden in the Residuals vs.&nbsp;Fitted plot in which all predictors are included. A non-linear relationship between a specific predictor and the outcome variable is a sign that you may need to transform the predictor (via quadratic, log, etc) in order for the relationship between it and the outcome variable to be better modeled.</p>
+<p>An important note: One might think that as long as the Residuals vs.&nbsp;Fitted plot looks good, it is not necessary that the relationship between each individual predictor and the outcome be linear. This is flawed thinking, for several reasons:</p>
+<ul>
+<li><p>When the relationship between one predictor and the outcome is not correctly described, other predictors often “compensate” with inflated or deflated coefficients that are incorrect.</p></li>
+<li><p>Even if the Residuals vs.&nbsp;Fitted plot looks good enough, a poorly specified model will have larger residuals, wider confidence intervals, and reduced power to detect true effects.</p></li>
+</ul></li>
+<li><p>Diagnostic tests. Generally, researchers rely on diagnostic plots to identify issues with their models, as the plots are easy to interpret and describe what the issues are, rather then a test which would just tell you that there is an issue. That said, in some instances (like automated model selection), it may be useful to use statistical tests that inform on linearity, such as the RESET test, or the Harvey-Collier Test.</p></li>
+</ul>
+<p>If you find that these diagnostic plots indicate a poorly specific model, your next course of action should be to consider on or more of the following steps to better specify your model:</p>
+<ul>
+<li><p>Adding additional predictor variables</p></li>
+<li><p>Transforming predictor variables</p></li>
+<li><p>Adding variable interaction terms</p></li>
+</ul>
+</section>
+<section id="assumption-2---independence-of-errors" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-2---independence-of-errors"><strong>Assumption 2 - Independence of Errors:</strong></h4>
+<p>Assumption: Residuals for each datapoint independent of each other.</p>
+<p>For example, the price of houses in the same neighborhood are likely correlated (and not independent) in R’s Boston dataset. The reasons that these prices are not independent may be due to variables measured in the dataset, like proximity to the Charles River, or variables not measured in the dataset, like proximity to hiking trails. If this correlation (non-independence) is not accounted for by the model, it will result in correlation (non-random) distribution of residuals. A good linear model will account for these correlations by adding predictor variables to the dataset that explain the correlation (e.g.&nbsp;proximity to the Charles River). Ho do you assess whether there are correlations not explained by the model?</p>
+<p><strong>Diagnostics that reveal unexplained correlation:</strong></p>
+<ul>
+<li><p>Residuals vs.&nbsp;Fitted Values plot and Component + Residual plots: Unexplained correlation will show up as deviations from linearity in these plots. The reason for this is that unexplained correlations are just another form of a poorly specified model, which manifests as residuals that are not randomly distributed around zero. This fact reveals an important principle in regression analysis: Good model specification solves most assumption violations.</p></li>
+<li><p>Residuals vs.&nbsp;grouping plots: In these the residuals are plotted against the values of variables not currently included in the model to assess whether the residual distribution is similar (or not) across all values of the variable. If the distribution is not similar across all values of the variable, it is an indication that this variable should be included in the model. Note that these plots differ from the Component + Residual plots in that the latter is used to determine whether variables already included in the model should be transformed, whereas these are used to determine whether additional variables should be included in the model.</p></li>
+<li><p>Residuals vs Order plot: There are several variations of these, but in effect they will show if the order in which samples were collected has a non-random relationship with the data. By plotting the order a sample was collected vs the value of its residual, it will be possible to visualize such a relationship.</p></li>
+<li><p>Residuals vs.&nbsp;geographic location: This is an example of any type of plot that seeks to draw in additional information not already included in the dataset to help explain patterns in the data not specified by the model.</p></li>
+<li><p>Diagnostic tests for autocorrelation: Several tests exist, like the Durbin-Watson Test, but in general researchers prefer to examine plots as they are easier to interpret.</p></li>
+</ul>
+<p>How to fix issues related to non-independent residuals? As non-independent residuals are a symptom of a poorly specified model, the approach to fix these is to add additional predictor variables to the model and transform them so as to produce a better model.</p>
+</section>
+<section id="assumption-3---homoscedasticity" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-3---homoscedasticity"><strong>Assumption 3 - Homoscedasticity:</strong></h4>
+<p>Assumption: The variance of the residuals is constant across all levels of the fitted values.</p>
+<p>If this assumption is violated, the model coefficients will still be accurate estimators of the mean expectation, but the SE estimate will be incorrect (and thus statistical inference is more challenging).</p>
+<p><strong>Diagnostic plots the reveal heteroscedasticity:</strong></p>
+<ul>
+<li><p>Residuals vs.&nbsp;Fitted values plot: Will show a funnel shape if data is heteroscedastic.</p></li>
+<li><p>Statistical test to reveal heteroscedasticity: Methods like the Breusch-Pagan Test and the White Test exist but researchers generally prefer to examine plots.</p></li>
+</ul>
+<p>How to fix issues related to non-homoscedasticity of residual values? The most common method is to use a Robust Standard Errors method that will leave the parameter coefficients unchanged, but will adjust the SEs. See below for more information. Other methods are also possible, such as transforming variables so as to produce homoscedastic variance, or using GLMs.</p>
+</section>
+<section id="assumption-4-normality-of-residuals-residuals-follow-a-normal-distribution" class="level4">
+<h4 class="anchored" data-anchor-id="assumption-4-normality-of-residuals-residuals-follow-a-normal-distribution"><strong>Assumption 4 – Normality of Residuals: Residuals follow a normal distribution:</strong></h4>
+<p>In practice this is mainly an issue with small sample sizes (&lt;100 samples). With small sample sizes and a non-normal distribution of residuals, the standard relationship between SEs and CIs breaks down, and thus inferential tests will be inaccurate. With larger sample sizes, the CLT will apply and inferential statistics can be confidently used. A good rule of thumb is that datasets with &gt;50 samples handle non-normality moderately well, whereas when there are &gt;100 samples, most non-normality issues are well handled.</p>
+<p><strong>Diagnostics that reveal a lack of normality:</strong></p>
+<ul>
+<li><p>Q-Q Plot. This plots sample quantiles vs.&nbsp;theoretical normal quantiles.</p></li>
+<li><p>Diagnostic test to reveal normally distributed residuals: The Shapiro-Wilks Test will test for normality, but again, researchers usually opt to assess normality via the Q-Q plot.</p></li>
+</ul>
+<p>How to fix issues related to non-normally distributed residuals? Again, if sample sizes are large, this is likely not as issue. With small sample sizes, transformation of the variables such that residuals are normal, or use of Bootstrap / other robust methods for statistical inference can be used.</p>
+</section>
+</section>
+<section id="what-to-do-when-assumptions-are-violated" class="level2">
+<h2 class="anchored" data-anchor-id="what-to-do-when-assumptions-are-violated">What to do when assumptions are violated?</h2>
+<p>If addition and/or transformation of predictor variables does not fix model issues, there are several options:</p>
+<ul>
+<li><p><strong>Use a Robust Errors Method.</strong> This leaves coefficients unchanged but addresses violations of homoscedasticity and provides some protection against violations of normality. These are widely used and accepted. Note that this method does not fix non-normality issues in small samples.</p></li>
+<li><p><strong>Use Bootstrap inference to address non-normality in small samples.</strong> This method creates an empirical sampling distribution by repeatedly sampling the dataset with replacement and uses the distribution for assumption-free inference tests.</p></li>
+<li><p><strong>Consider other modeling frameworks like Mixed-Effects models.</strong> These are useful for clustered or hierarchical data where independence violations can’t be fixed by adding predictors. Mixed effects are especially useful for data included paired comparisons (e.g.&nbsp;the same individual assessed before / after treatment), and are more powerful and flexible then a paired t-test as they can include additional covariates and complex experimental designs.</p></li>
+<li><p><strong>Consider using a GLM.</strong> These are useful when the response variable is clearly non-normal and/or highly skewed, and for count data with small samples sizes (&lt;20 samples). GLMs may address the root causes of violated assumptions. Disadvantages are that they are more complex to implement and interpret.</p></li>
+</ul>
+</section>
+<section id="two-final-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="two-final-considerations">Two final considerations</h2>
+<section id="multicollinearity" class="level3">
+<h3 class="anchored" data-anchor-id="multicollinearity">Multicollinearity</h3>
+<p>Multicollinearity occurs when predictor variables are highly correlated with each other, making it difficult to determine the individual effect of each predictor. When this occurs, coefficient estimates remain unbiased, but they become unstable, meaning that small changes in data can lead to large changes in estimates. In general, models that suffer from multicollinearity are still fine for prediction, so long as the overall model fits well. If you want to understand the individual effects of predictors however, multicollinearity will be confounding.</p>
+<section id="how-to-detect-multicollinearity" class="level4">
+<h4 class="anchored" data-anchor-id="how-to-detect-multicollinearity"><strong>How to detect multicollinearity?</strong></h4>
+<ul>
+<li><p>Assess correlation among predictor variables</p></li>
+<li><p>Use the vif function: Values &gt;5 suggest problematic multicollinearity.</p></li>
+</ul>
+</section>
+<section id="how-to-deal-with-multicollinearity" class="level4">
+<h4 class="anchored" data-anchor-id="how-to-deal-with-multicollinearity"><strong>How to deal with multicollinearity?</strong></h4>
+<ul>
+<li><p>Remove redundant predictors</p></li>
+<li><p>Combine correlated predictors (use ratios, sums, or products as guided by domain knowledge)</p></li>
+<li><p>Use regularization methods (Ridge, Lasso)</p></li>
+<li><p>PCA</p></li>
+</ul>
+</section>
+</section>
+<section id="leverage" class="level3">
+<h3 class="anchored" data-anchor-id="leverage">Leverage</h3>
+<p>Leverage occurs when individual observations have unusual power to influence your model due to extreme or unusual combinations of predictor values. High leverage points are located in sparsely populated regions of the predictor space and can dramatically change model coefficient estimates. Unlike multicollinearity, leverage involves specific data points rather than relationships between variables. High leverage points are not automatically problematic - they only become concerning when they also don’t follow the overall pattern established by the rest of the data.</p>
+<section id="how-to-detect-leverage-and-influence" class="level4">
+<h4 class="anchored" data-anchor-id="how-to-detect-leverage-and-influence"><strong>How to detect leverage and influence?</strong></h4>
+<ul>
+<li><p>Examine the Residuals vs.&nbsp;Leverage plot from standard diagnostic plots</p></li>
+<li><p>Use Cook’s distance: Values &gt;1 indicate highly influential points, values &gt;4/n are worth investigating</p></li>
+<li><p>Check leverage values: Points with leverage &gt;3p/n (where p = number of predictors, n = sample size) have high leverage</p></li>
+</ul>
+</section>
+<section id="how-to-address-problematic-leverage" class="level4">
+<h4 class="anchored" data-anchor-id="how-to-address-problematic-leverage"><strong>How to address problematic leverage?</strong></h4>
+<ul>
+<li><p>Investigate the data point: Is it a data entry error, measurement error, or genuine but unusual case?</p></li>
+<li><p>Assess impact: Compare model results with and without the influential point</p></li>
+<li><p>If it’s a genuine data point: Keep it but consider robust regression methods or report sensitivity analysis</p></li>
+<li><p>If it’s questionable: Remove transparently and report the decision, or consider winsorizing extreme values</p></li>
+<li><p>If many influential points exist: This may indicate model misspecification or need for separate models for different populations</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="a-practical-step-wise-guide-to-linear-modeling" class="level2">
+<h2 class="anchored" data-anchor-id="a-practical-step-wise-guide-to-linear-modeling">A practical step-wise guide to linear modeling</h2>
+<section id="step-1-exploratory-data-analysis" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-exploratory-data-analysis"><strong>Step 1: Exploratory Data Analysis</strong></h4>
+<ul>
+<li><p>Examine data structure and identify missing values and outliers</p></li>
+<li><p>Check for correlations among predictors (flag r &gt; 0.7)</p></li>
+<li><p>Visualize relationships between predictors and response , and look for obvious non-linear patterns</p></li>
+</ul>
+</section>
+<section id="step-2-initial-model-building" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-initial-model-building"><strong>Step 2: Initial Model Building</strong></h4>
+<ul>
+<li><p>Start simple, build complexity gradually</p></li>
+<li><p>Address multicollinearity early: remove or combine correlated predictors (VIF &gt; 10)</p></li>
+<li><p>Use domain knowledge to create meaningful variable combinations</p></li>
+</ul>
+</section>
+<section id="step-3-assumption-checking" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-assumption-checking"><strong>Step 3: Assumption Checking</strong></h4>
+<ul>
+<li><p><em>Residuals vs Fitted:</em> Check for curved patterns that indicate poor model specification</p></li>
+<li><p><em>Q-Q Plot:</em> Assess normality of residuals</p></li>
+<li><p><em>Scale-Location:</em> Look for funnel shape (heteroscedasticity)</p></li>
+<li><p><em>Residuals vs Leverage:</em> Identify influential outliers</p></li>
+<li><p><em>VIF values:</em> Confirm multicollinearity is resolved</p></li>
+</ul>
+</section>
+<section id="step-4-address-assumption-violations" class="level4">
+<h4 class="anchored" data-anchor-id="step-4-address-assumption-violations"><strong>Step 4: Address Assumption Violations</strong></h4>
+<ul>
+<li><p><em>Linearity violated:</em> Add polynomial terms, transform predictors, or include interactions</p></li>
+<li><p><em>Independence violated:</em> Add missing predictors or consider mixed-effects models</p></li>
+<li><p><em>Heteroscedasticity:</em> Use robust standard errors or transform response variable</p></li>
+<li><p><em>Non-normality (small samples):</em> Transform variables or use bootstrap inference</p></li>
+</ul>
+</section>
+<section id="step-5-model-refinement" class="level4">
+<h4 class="anchored" data-anchor-id="step-5-model-refinement"><strong>Step 5: Model Refinement</strong></h4>
+<ul>
+<li><p>Iteratively improve model based on diagnostics</p></li>
+<li><p>Add complexity only if it improves assumption compliance</p></li>
+<li><p>Compare models using AIC or cross-validation</p></li>
+<li><p>Prioritize interpretability unless prediction is the only goal</p></li>
+</ul>
+</section>
+<section id="step-6-final-validation" class="level4">
+<h4 class="anchored" data-anchor-id="step-6-final-validation"><strong>Step 6: Final Validation</strong></h4>
+<ul>
+<li><p>Re-run diagnostics on final model</p></li>
+<li><p>If assumptions still violated, apply appropriate robust methods</p></li>
+<li><p>Ensure VIF &lt; 5 for all predictors</p></li>
+</ul>
+</section>
+<section id="step-7-interpretation-and-reporting" class="level4">
+<h4 class="anchored" data-anchor-id="step-7-interpretation-and-reporting"><strong>Step 7: Interpretation and Reporting</strong></h4>
+<ul>
+<li><p>Report coefficients with confidence intervals</p></li>
+<li><p>Focus on practical significance, not just statistical</p></li>
+<li><p>Acknowledge limitations from any remaining assumption violations</p></li>
+</ul>
+</section>
+<section id="what-to-do-if-assumptions-remain-violated" class="level4">
+<h4 class="anchored" data-anchor-id="what-to-do-if-assumptions-remain-violated"><strong>What to do if assumptions remain violated?</strong></h4>
+<ul>
+<li><em>Heteroscedasticity only</em> → Use robust standard errors</li>
+<li><em>Non-normality + small sample</em> → Use bootstrap inference</li>
+<li><em>Clustered/paired data</em> → Use mixed-effects models</li>
+<li><em>Binary/count response</em> → Use GLMs</li>
+<li><em>Severe assumption violations persist</em> → Consider non-linear models</li>
+</ul>
+</section>
+</section>
+<section id="key-principle" class="level2">
+<h2 class="anchored" data-anchor-id="key-principle">Key Principle</h2>
+<p>Good model specification solves most problems. Before using statistical fixes, ask: “What important variables or relationships am I missing?”</p>
+</section>
+</section>
+<section id="part-2-time-to-model-some-real-data" class="level1">
+<h1>Part 2: Time to model some real data</h1>
+<section id="introduction-our-research-goal" class="level4">
+<h4 class="anchored" data-anchor-id="introduction-our-research-goal"><strong>Introduction: Our research goal</strong></h4>
+<p>Imagine you’re a data scientist for a luxury jewelry company. Your CEO has called an urgent meeting: “Our competitors are pricing diamonds more competitively than us. We need to understand what actually drives diamond prices so we can optimize our pricing strategy and inventory decisions.”</p>
+<p>This tutorial follows our investigation through a series of focused research questions, each driving specific modeling decisions. We’ll use the built-in <code>diamonds</code> dataset from ggplot2, following the theoretical framework from the above linear modeling introduction.</p>
+</section>
+<section id="our-core-research-questions" class="level4">
+<h4 class="anchored" data-anchor-id="our-core-research-questions"><strong>Our Core Research Questions:</strong></h4>
+<ol type="1">
+<li><p>What is the relationship between diamond size and price?</p></li>
+<li><p>How much premium do quality factors (cut, color, clarity) command?</p></li>
+<li><p>Do quality effects vary by diamond size? (Are quality improvements more valuable on larger stones?)</p></li>
+</ol>
+</section>
+<section id="lets-get-started" class="level4">
+<h4 class="anchored" data-anchor-id="lets-get-started">Let’s get started</h4>
+<p><strong>Import required libraries and data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra) </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car) <span class="co"># for diagnostic tests and VIF</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom) <span class="co"># to convert model outputs to tidy format</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych) <span class="co"># to use describe for tables and for pairs.panels</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot) <span class="co"># for correlation plots</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggExtra) <span class="co"># for marginal histograms</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret) <span class="co"># for cross validation to assess overfitting  </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans) <span class="co"># for calculating marginal means and contrasts from models</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify) <span class="co"># for making ggplot images from plot diag</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br><strong>Load the data and view the structure</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the data and check out the structure</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(diamonds)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(<span class="fu">round</span>(<span class="fu">describe</span>(diamonds, <span class="at">skew =</span> <span class="cn">FALSE</span>)),<span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">vars</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">min</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">max</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">range</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">se</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">carat</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cut*</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">color*</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">clarity*</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">depth</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">79</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">table</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">price</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">3933</td>
+<td style="text-align: right;">3989</td>
+<td style="text-align: right;">2401</td>
+<td style="text-align: right;">326</td>
+<td style="text-align: right;">18823</td>
+<td style="text-align: right;">18497</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">x</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">y</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">z</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">53940</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Our dataset has 53,940 rows and 10 columns. The variables cut, color, clarity are factor variables and the rest are numerical. Also notice that there are some x,y, and z values that are 0, indicating a diamond with 0 size in at least one dimension. This is impossible and we will filter these out.</p>
+<p><br><strong>Remove rows with impossible / missing data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">filter</span>(diamonds, x <span class="sc">&gt;</span> <span class="dv">0</span>, y <span class="sc">&gt;</span> <span class="dv">0</span>, z <span class="sc">&gt;</span> <span class="dv">0</span>) </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">nrow</span>(diamonds) <span class="sc">-</span> <span class="fu">nrow</span>(df)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(<span class="st">"Removed"</span>, x, <span class="st">"rows that had 0 for x,y or z values"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Removed 20 rows that had 0 for x,y or z values</code></pre>
+</div>
+</div>
+<p><br><strong>Now let’s look at the first five rows of the df</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(<span class="fu">head</span>(df)) <span class="sc">%&gt;%</span> <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">carat</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">cut</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">color</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">clarity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">depth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">table</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">price</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">x</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">y</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.23</td>
+<td style="text-align: left;">Ideal</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">326</td>
+<td style="text-align: right;">3.95</td>
+<td style="text-align: right;">3.98</td>
+<td style="text-align: right;">2.43</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.21</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">SI1</td>
+<td style="text-align: right;">59.8</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">326</td>
+<td style="text-align: right;">3.89</td>
+<td style="text-align: right;">3.84</td>
+<td style="text-align: right;">2.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.23</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">VS1</td>
+<td style="text-align: right;">56.9</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">327</td>
+<td style="text-align: right;">4.05</td>
+<td style="text-align: right;">4.07</td>
+<td style="text-align: right;">2.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.29</td>
+<td style="text-align: left;">Premium</td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">VS2</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">4.20</td>
+<td style="text-align: right;">4.23</td>
+<td style="text-align: right;">2.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.31</td>
+<td style="text-align: left;">Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">SI2</td>
+<td style="text-align: right;">63.3</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">335</td>
+<td style="text-align: right;">4.34</td>
+<td style="text-align: right;">4.35</td>
+<td style="text-align: right;">2.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.24</td>
+<td style="text-align: left;">Very Good</td>
+<td style="text-align: left;">J</td>
+<td style="text-align: left;">VVS2</td>
+<td style="text-align: right;">62.8</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">336</td>
+<td style="text-align: right;">3.94</td>
+<td style="text-align: right;">3.96</td>
+<td style="text-align: right;">2.48</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Now let’s start our modeling by doing some exploratory analysis.</p>
+</section>
+<section id="exploratory-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-analysis">Exploratory analysis</h2>
+<p><br><strong>What does the distribution of diamond prices look like?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>price)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">'grey'</span>, <span class="at">color=</span><span class="st">'black'</span>, <span class="at">bins=</span><span class="dv">50</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Distribution of diamond prices'</span>) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">16</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The distribution looks highly right skewed. We will keep this in mind during modeling.</p>
+<p><br><strong>Assess collinearity of variables in the dataset</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_numeric <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(price, table, depth, x,y,z,carat)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(df_numeric, <span class="at">use=</span><span class="st">"complete.obs"</span>) <span class="do">##### </span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(cor_matrix, <span class="at">type =</span> <span class="st">"upper"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">lab =</span> <span class="cn">TRUE</span>, <span class="at">lab_size =</span> <span class="dv">3</span>, <span class="at">hc.order =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"Variable correlation matrix"</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">16</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="528"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>X,Y,Z carat and price are all highly correlated. This is not very surprising, but we will need to take this into account when modeling. Let’s look at these relationships in a bit more detail with some scatterplots.</p>
+<p><br><strong>Make exploratory scatterplots</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs.panels</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(price, carat, x, y, z),</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">cex =</span> <span class="fl">0.5</span>,                   <span class="co"># Point size (smaller values = smaller points)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">col =</span> <span class="st">"red"</span>,                <span class="co"># Point color</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">cex.cor =</span> <span class="fl">0.8</span>,              <span class="co"># Correlation text size</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">cex.axis =</span> <span class="fl">1.2</span>,             <span class="co"># Axis text size</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">cex.labels =</span> <span class="fl">1.5</span>)           <span class="co"># Variable label size</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The scatterplots show a non-linear relationship between price, carat, and x. Among x,y there appears to be a linear relationship. Given that carat is highly correlated with x,y, and z, I think I can probabaly just use carat as a predictdor associated with diamond size, and I will need to find a way to model the non-linear relationship between carat and price (x).</p>
+<p>Next let’s look at the relationship between price and the factor variables.</p>
+<p><br><strong>Make boxplots to assess the relationship between price and factor variables</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.align: center</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"cut"</span>, <span class="st">"color"</span>, <span class="st">"clarity"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>plot_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(vars)) {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>.data[[vars[i]]], <span class="at">y=</span>price)) <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill=</span>i<span class="sc">+</span><span class="dv">1</span>) <span class="sc">+</span> <span class="co"># Note outliers are removed</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust=</span><span class="dv">1</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">14</span>)) <span class="sc">+</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span>vars[i], <span class="at">x=</span><span class="st">""</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove y axis titles in 2nd and 3rd plots</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (i <span class="sc">!=</span> <span class="dv">1</span>) {p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>())}</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  plot_list[[i]] <span class="ot">&lt;-</span> p}</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(plot_list[[<span class="dv">1</span>]], plot_list[[<span class="dv">2</span>]], plot_list[[<span class="dv">3</span>]], <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Interesting. It looks like overall price decreases with improved cut, increases with more color, and decreases with clarity. This is all a bit surprising. I will need to keep this in mind and assess whether these relationships are confounded by any other variables in the dataset.</p>
+<p>Okay, so what have we learned from our exploratory analysis?</p>
+<ul>
+<li><p>The price distribution is highly right skewed. Most diamonds are relativley cheap, and there are relatively few that command very high prices.</p></li>
+<li><p>Price, carat, and each size dimension are all very highly correlated. This correlation is clearly non-linear for x vs.&nbsp;price and carat vs.&nbsp;price.</p></li>
+<li><p>We observed a counter-intuitive relationship between price and cut, color, and clarity.</p></li>
+</ul>
+<p>Now that we’ve finished our exploratory analysis, let’s get to our research questions!</p>
+</section>
+<section id="what-are-the-determinants-of-diamond-price" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-the-determinants-of-diamond-price">What are the determinants of diamond price?</h2>
+<p>Given our exploratory analysis, it seems like diamond size / carat (weight) is a primary determinant of price. Since carat should be a function of x,y and z, we’ll use carat as the predictor variable. We also saw that the relationship between carat and price is not linear. Let’s build some simple models and see how well we can model price as a function of carat.</p>
+<p><br><strong>Plot price vs carat to more closely visualize this relationship</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>carat, <span class="at">y=</span>price)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"gam"</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># add distributions</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggMarginal</span>(p, <span class="at">type=</span><span class="st">"histogram"</span>, <span class="at">bins=</span><span class="dv">30</span>, <span class="at">fill=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="528"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What does the scatterplot tell us? Well, the relationship doesn’t look linear, as we saw above. From 0 to 1 carat, the price increases by 5k, and from 1 to 2 carats, price increases by ~10k. It then starts to level off after that, but there are relatively few observations with price &gt; 15k. What sort of a function might fit this data? Let’s look at some common relationships that can be modeled with OLMs that might fit these data.</p>
+<p><br><strong>Create and display table of common relationships</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Relationship <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Linear"</span>, <span class="st">"Power-law"</span>, <span class="st">"Exponential"</span>, <span class="st">"Logarithmic"</span>, <span class="st">"Reciprocal"</span>, <span class="st">"Polynomial"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Form <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"y = a + Bx"</span>, <span class="st">"y = ax^B"</span>, <span class="st">"y = ae^Bx"</span>, <span class="st">"y = a + B*log(x)"</span>, <span class="st">"y = a+ B/x"</span>, <span class="st">"y = a + Bx + Cx^2"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>When_Linear <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"always"</span>, <span class="st">"log(y) = log(x)"</span>, <span class="st">"log(y) = x"</span>, <span class="st">"y = log(x)"</span>, <span class="st">"y = 1/x"</span>, <span class="st">"never exactly"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>Example <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"simple relationship"</span>, <span class="st">"growth / decay between linear and exponential"</span>, <span class="st">"uncontrolled population growth, PCR amplificaiton"</span>, <span class="st">"diminishing returns, sensory adaptation"</span>, <span class="st">"drug concentration decay"</span>, <span class="st">"complex relationships"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Relationship, Form, When_Linear, Example)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(d) <span class="sc">%&gt;%</span> <span class="fu">kable_styling</span>(<span class="at">font_size=</span><span class="dv">14</span>, <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Relationship</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Form</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">When_Linear</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Linear</td>
+<td style="text-align: left;">y = a + Bx</td>
+<td style="text-align: left;">always</td>
+<td style="text-align: left;">simple relationship</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Power-law</td>
+<td style="text-align: left;">y = ax^B</td>
+<td style="text-align: left;">log(y) = log(x)</td>
+<td style="text-align: left;">growth / decay between linear and exponential</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Exponential</td>
+<td style="text-align: left;">y = ae^Bx</td>
+<td style="text-align: left;">log(y) = x</td>
+<td style="text-align: left;">uncontrolled population growth, PCR amplificaiton</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Logarithmic</td>
+<td style="text-align: left;">y = a + B*log(x)</td>
+<td style="text-align: left;">y = log(x)</td>
+<td style="text-align: left;">diminishing returns, sensory adaptation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Reciprocal</td>
+<td style="text-align: left;">y = a+ B/x</td>
+<td style="text-align: left;">y = 1/x</td>
+<td style="text-align: left;">drug concentration decay</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Polynomial</td>
+<td style="text-align: left;">y = a + Bx + Cx^2</td>
+<td style="text-align: left;">never exactly</td>
+<td style="text-align: left;">complex relationships</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Comparing the trends in our data to the table, it looks like our data might fit a power-law, exponential, or polynomial better than a linear one. Let’s put this thought on a hold for a moment and just start by modeling out data with a simple linear relationship. We don’t expect this to be an ideal model but it will give us a good place to start.</p>
+<p><br><strong>Build first simple model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(price <span class="sc">~</span> carat, <span class="at">data=</span>df)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre style="margin-left: 4em;"><code>
+Call:
+lm(formula = price ~ carat, data = df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18582.6   -804.6    -18.9    537.0  12731.8 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -2255.77      13.05  -172.8   &lt;2e-16 ***
+carat        7755.77      14.07   551.3   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1548 on 53918 degrees of freedom
+Multiple R-squared:  0.8493,    Adjusted R-squared:  0.8493 
+F-statistic: 3.039e+05 on 1 and 53918 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><br></p>
+<p>The model has an R<sup>2</sup> of .84. which is not bad, but let’s look at some diagnostic plots.</p>
+<p><br><strong>Plot RvF and QQ plots</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(model1)[[<span class="dv">1</span>]] <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(model1)[[<span class="dv">2</span>]] <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From these plots we can see that our fitted values are underestimating the true values when price is between ~5k and 15k, then overestimating the true values when price is ~15k+. Furthermore, the QQ plots tell us that our residual distribution has very long tails on both the left and right, and is not at all normal. Overall, we really want to try and improve our model fit so that the RvF show a more symmetrical distribution of points around y=0 and the QQ plot shows a distribution of residual values that is much more normal.</p>
+<p>Let’s see whether an exponential model might fit these data better. To assess this we’ll first make a scatterplot and look for linearity between carat and ln(price).</p>
+<p><br><strong>Plot ln(price) as a function of carat</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>carat, <span class="at">y=</span><span class="fu">log</span>(price))) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"gam"</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggMarginal</span>(p, <span class="at">type=</span><span class="st">"histogram"</span>, <span class="at">bins=</span><span class="dv">30</span>, <span class="at">fill=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="528"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This doesn’t seem much better, but let’s try fitting a model anyway to see how the the R<sup>2</sup> and residuals are affected.</p>
+<p><br><strong>Fit the exponential model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model_exp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> carat, <span class="at">data=</span>df)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre style="margin-left: 4em;"><code>
+Call:
+lm(formula = log(price) ~ carat, data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.2878 -0.2446  0.0332  0.2577  1.5639 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 6.214495   0.003348  1856.1   &lt;2e-16 ***
+carat       1.970542   0.003609   546.1   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.397 on 53918 degrees of freedom
+Multiple R-squared:  0.8469,    Adjusted R-squared:  0.8469 
+F-statistic: 2.982e+05 on 1 and 53918 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><br></p>
+<p>The R<sup>2</sup> is basically the same as model1, so this is clearly not an improvement. Let’s next explore a power-law relationship.</p>
+<p><br><strong>Plot ln(price) as a function of ln(carat)</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log</span>(carat), <span class="at">y=</span><span class="fu">log</span>(price))) <span class="sc">+</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"gam"</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggMarginal</span>(p, <span class="at">type=</span><span class="st">"histogram"</span>, <span class="at">bins=</span><span class="dv">30</span>, <span class="at">fill=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="528"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Wow this looks great! It seems that price and carat have a power-law relationship. This means that price increases more than linearly as a function of carat, but not exponentially. Let’s fit a model with a power-law relationship.</p>
+<p><br><strong>Fit a power-law model</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>model_powerlaw <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log2</span>(price) <span class="sc">~</span> <span class="fu">log2</span>(carat), <span class="at">data=</span>df)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_powerlaw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre style="margin-left: 4em;"><code>
+Call:
+lm(formula = log2(price) ~ log2(carat), data = df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.17633 -0.24455 -0.00857  0.23994  1.93026 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 12.188967   0.001969  6189.6   &lt;2e-16 ***
+log2(carat)  1.675908   0.001934   866.5   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3789 on 53918 degrees of freedom
+Multiple R-squared:  0.933, Adjusted R-squared:  0.933 
+F-statistic: 7.509e+05 on 1 and 53918 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><br></p>
+<p>This model is a substantial improvement. We can now explain 93.3% of the variation in diamond price using carat as the sole predictor. Let’s look at our diagnostic plots again.</p>
+<p><br><strong>Examine RvF and QQ plots for the power-law model</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(model_powerlaw)[[<span class="dv">1</span>]] <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(model_powerlaw)[[<span class="dv">2</span>]] <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These plots show a major improvement over model1, as expected. However we are still overestimating the price at the high end of the price range, and our residual distribution still has tails longer than a normal distribution. Let’s see if we can get an even better model by adding some extra parameters.</p>
+<p>To do this, we’ll first investigate if there is a meaningful relationship between the residuals of the power-law model, and several of the other variables in the dataset.</p>
+<p><br><strong>Make residual vs grouping plots</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the residuals of the model. This returns the residual for every price value in the df in order of the df rows</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> df</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plot_df<span class="sc">$</span>residuals <span class="ot">&lt;-</span> <span class="fu">residuals</span>(model_powerlaw)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"cut"</span>, <span class="st">"color"</span>, <span class="st">"clarity"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># now plot these residuals against other variables in the dataset</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(vars)) {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x=</span>.data[[vars[i]]], <span class="at">y=</span>residuals)) <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>                <span class="fu">geom_boxplot</span>(<span class="at">fill=</span>i<span class="sc">+</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  plots[[i]] <span class="ot">&lt;-</span> p}</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># make a plot for the table variable</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>plots[[i<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x=</span>table, <span class="at">y=</span>residuals)) <span class="sc">+</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">4</span>, <span class="at">size=</span><span class="fl">1.5</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co"># display the plots</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(plots[[<span class="dv">1</span>]], plots[[<span class="dv">2</span>]], plots[[<span class="dv">3</span>]], plots[[<span class="dv">4</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It looks like there is a relationship between cut, color, and clarity, and the output variable, price:</p>
+<ul>
+<li><p>The model is underestimating the price of ideal cut diamonds</p></li>
+<li><p>The model is overestimating the price of colored (not clear) diamonds.</p></li>
+<li><p>The model is underestimating the price of clear diamonds.</p></li>
+</ul>
+<p>These relationships go in a direction that makes logical sense, in contrast to the boxplots above where we saw, e.g.&nbsp;that better cut diamonds have lower prices. It therefore appears that these variables were confounded with carat, but now that our model accounts for the relationship between price and carat, the residuals of this model allow us to see the true relationship between price and cut, color, and clarity. Let’s check if this is the case by plotting cut, color, and clarity against carat.</p>
+<p><br><strong>Plot cut, clarity, and color against carat</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"cut"</span>, <span class="st">"color"</span>, <span class="st">"clarity"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make the plots of each property vs carat</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(vars)) {</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(plot_df, <span class="fu">aes</span>(<span class="at">x=</span>.data[[vars[i]]], <span class="at">y=</span>carat)) <span class="sc">+</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                <span class="fu">geom_boxplot</span>(<span class="at">fill=</span>i<span class="sc">+</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>       <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>       <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) </span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  plots[[i]] <span class="ot">&lt;-</span> p}</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># display the plots</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(plots[[<span class="dv">1</span>]], plots[[<span class="dv">2</span>]], plots[[<span class="dv">3</span>]], <span class="at">ncol=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As expected, smaller diamonds have better cuts, better color, and greater clarity. This explains why we saw this same relationship between cut, color, and clarity and the output variable price when we first assessed this relationship: since carat is such a strong predictor of price it was confounding the true relationships between other predictors and price. Okay, now that we are convinced these three variables are predictors of price, let’s add them to our model.</p>
+<p>A note on adding ordered factor variables to models. By default, R applies polynomial contrasts to ordered factor variables in a model and calculates coefficients as such. What does this mean, and what types of different contrasts are there?</p>
+<ol type="1">
+<li>Treatment contrasts - This is the default for variable other than non-ordered factors. When this is used, each coefficient is calculated relative to a reference level, with the reference being the (alphabetically) first level.</li>
+<li>Sum contrasts (aka deviation coding) - This determines coefficients relative to the mean of all levels. It does this by forcing the sum of all coefficients to equal 0.</li>
+<li>Polynomial contrasts - This is used for ordered factors and tests for trends across levels. It assumes equal spacing across levels. These coefficients can be harder to interpret.</li>
+</ol>
+<p>For our usage here, we do not want the factor variables to use polynomial contrasts. To override this default behavior, we will explicitly define these variables as treatment contrasts within the dataframe (df).</p>
+<p><br><strong>Make a fourth model that incorporates cut, color, and clarity as predictors</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set contrasts within dataframe</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(df<span class="sc">$</span>color) <span class="ot">&lt;-</span> contr.treatment</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(df<span class="sc">$</span>cut) <span class="ot">&lt;-</span> contr.treatment</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(df<span class="sc">$</span>clarity) <span class="ot">&lt;-</span> contr.treatment</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> <span class="fu">log</span>(carat) <span class="sc">+</span> color <span class="sc">+</span> cut <span class="sc">+</span> clarity, <span class="at">data=</span>df)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(model4))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre style="margin-left: 4em;"><code>
+Call:
+lm(formula = log(price) ~ log(carat) + color + cut + clarity, 
+    data = df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.01111 -0.08636 -0.00031  0.08342  1.94779 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   7.856821   0.005765 1362.89   &lt;2e-16 ***
+log(carat)    1.883745   0.001129 1668.53   &lt;2e-16 ***
+colorE       -0.054226   0.002118  -25.60   &lt;2e-16 ***
+colorF       -0.094546   0.002142  -44.13   &lt;2e-16 ***
+colorG       -0.160207   0.002097  -76.41   &lt;2e-16 ***
+colorH       -0.251054   0.002225 -112.83   &lt;2e-16 ***
+colorI       -0.372515   0.002492 -149.48   &lt;2e-16 ***
+colorJ       -0.510951   0.003074 -166.24   &lt;2e-16 ***
+cutGood       0.080137   0.003892   20.59   &lt;2e-16 ***
+cutVery Good  0.117243   0.003620   32.39   &lt;2e-16 ***
+cutPremium    0.139403   0.003580   38.94   &lt;2e-16 ***
+cutIdeal      0.161269   0.003549   45.44   &lt;2e-16 ***
+claritySI2    0.427897   0.005187   82.49   &lt;2e-16 ***
+claritySI1    0.592905   0.005158  114.94   &lt;2e-16 ***
+clarityVS2    0.742110   0.005187  143.07   &lt;2e-16 ***
+clarityVS1    0.812202   0.005266  154.23   &lt;2e-16 ***
+clarityVVS2   0.947201   0.005427  174.52   &lt;2e-16 ***
+clarityVVS1   1.018593   0.005584  182.41   &lt;2e-16 ***
+clarityIF     1.113650   0.006038  184.43   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1338 on 53901 degrees of freedom
+Multiple R-squared:  0.9826,    Adjusted R-squared:  0.9826 
+F-statistic: 1.693e+05 on 18 and 53901 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>We now have a model that explains ~98% of the variation in price as a function of carat, cut, color and clarity. While this is a pretty good model, let’s check out RvF and QQ plots.</p>
+<p><br><strong>Check diagnostic plots for model4</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(model4)[[<span class="dv">1</span>]] <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(model4)[[<span class="dv">2</span>]] <span class="sc">+</span> <span class="fu">theme_bw</span>()</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="tutorial_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These plots are looking pretty good! Let’s now do some additional checks to assess the stability of our model and the potential for it to be overfit to the data. First we will test for stability by determining if any of the predictors are substantially collinear. We will do this using vif. Vif works by iterating through each predictor variable and trying to predict the values of that predictor via a linear model containing the remaining predictors. A high R<sup>2</sup> for this model indicates substantial correlation among predictors. Vif will report these values for each predictor as 1 / (1 - R<sup>2</sup>). Vif values can be interpreted as follows:</p>
+<ul>
+<li><p>&lt; 2.5: No problem</p></li>
+<li><p>2.5-5: Moderate correlation (usually okay)</p></li>
+<li><p>5-10: High correlation (concerning)</p></li>
+<li><p>&gt; 10: Severe multicollinearity (problematic)</p></li>
+<li><p>&gt; 100: Extreme multicollinearity (likely data leakage)</p></li>
+</ul>
+<p><br><strong>Use Vif to test for multicollinearity</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>vif_values <span class="ot">&lt;-</span> <span class="fu">vif</span>(model4)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(vif_values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               GVIF Df GVIF^(1/(2*Df))
+log(carat) 1.312871  1        1.145806
+color      1.139994  6        1.010978
+cut        1.105702  4        1.012639
+clarity    1.323472  7        1.020220</code></pre>
+</div>
+</div>
+<p>The value we care about in the table is the adjusted GVI (the last column). The adjusted values makes values comparable among factor varaibles and continuous variables. Since all of the values are low, we do not need to be concerned about multicollinearity among our predictors.</p>
+<p>Next, let’s test for overfitting using cross validation.</p>
+<p><br><strong>Set up the cross validation test</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This tells caret HOW to do the cross-validation</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>cv_control <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"cv"</span>,              <span class="co"># Use cross-validation (not bootstrap, etc.)</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">number =</span> <span class="dv">10</span>,                <span class="co"># Split data into 10 pieces (10-fold CV)</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">savePredictions =</span> <span class="st">"final"</span>,  <span class="co"># Keep the predictions for later analysis</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">verboseIter =</span> <span class="cn">FALSE</span>)         <span class="co"># Don't progress as it runs</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>No we will run the cross validation test. This will split the data into 10 equal parts, then run 10 iteratins in which it:</p>
+<ol type="1">
+<li>Fits parameter values of the model on 9/10 parts</li>
+<li>Uses the model with the fit parameter values to predict the prices of diamonds in the last part</li>
+<li>Determines the R<sup>2</sup> of the model when predicting the price of the diamonds in the last part</li>
+<li>Iterate again, using a distinct set of 9 parts for training and a distinct set for predicting</li>
+<li>Average the R<sup>2</sup> values from each of the 10 iterations</li>
+</ol>
+<p>If the average R<sup>2</sup> of the model tests is substantially worse than the R<sup>2</sup> obtained above during model training on the entire dataset (.982) this would be evidence of overfitting and poor prediction ability.</p>
+<p><br><strong>Run the cross validation test</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed for reproducible results</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify the factor variables as contrasts in the df so that caret can handle them. </span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Unlike lm(), caret cannot hanlde "C(df$VARIABLE, treatment)"</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>color_treatment <span class="ot">&lt;-</span> <span class="fu">C</span>(df<span class="sc">$</span>color, treatment)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>cut_treatment <span class="ot">&lt;-</span> <span class="fu">C</span>(df<span class="sc">$</span>cut, treatment) </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>clarity_treatment <span class="ot">&lt;-</span> <span class="fu">C</span>(df<span class="sc">$</span>clarity, treatment)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify the model we want to validate</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>model_formula <span class="ot">&lt;-</span> <span class="fu">log</span>(price) <span class="sc">~</span> <span class="fu">log</span>(carat) <span class="sc">+</span> color_treatment <span class="sc">+</span> cut_treatment <span class="sc">+</span> clarity_treatment</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Run cross-validation</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>cv_model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  model_formula,    <span class="co"># What to predict and with what</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df,        <span class="co"># Your data</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"lm"</span>,    <span class="co"># Use linear regression (same as lm())</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> cv_control,  <span class="co"># How to do CV </span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="st">"RMSE"</span>   <span class="co"># What to optimize (could be "Rsquared" instead)</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at results</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cv_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression 
+
+53920 samples
+    4 predictor
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 48528, 48529, 48527, 48527, 48528, 48528, ... 
+Resampling results:
+
+  RMSE       Rsquared   MAE      
+  0.1337911  0.9826105  0.1040117
+
+Tuning parameter 'intercept' was held constant at a value of TRUE</code></pre>
+</div>
+</div>
+<p>The RMSE and R<sup>2</sup> values reported are the average across each of the 10 train/test iterations. They look good, but let’s directly compare to them to our original model, model4.</p>
+<p><br><strong>Compare RMSE values between model4 and the cross-validation result</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"model4"</span>, <span class="st">"cv_model"</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>residuals_model4 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(<span class="fu">residuals</span>(model4)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>residuals_cv_model <span class="ot">&lt;-</span> cv_model<span class="sc">$</span>results<span class="sc">$</span>RMSE</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>r2_cv_model <span class="ot">&lt;-</span> cv_model<span class="sc">$</span>results<span class="sc">$</span>Rsquared</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>r2_model4 <span class="ot">&lt;-</span> <span class="fu">summary</span>(model4)<span class="sc">$</span>r.squared</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>rmse <span class="ot">&lt;-</span> <span class="fu">c</span>(residuals_model4, residuals_cv_model)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">c</span>(r2_model4, r2_cv_model)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>comparison_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">rbind</span>(rmse, r2)) </span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(comparison_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"RMSE"</span>, <span class="st">"R_squared"</span>)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(comparison_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"model4"</span>, <span class="st">"cv_model"</span>)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>comparison_df <span class="ot">&lt;-</span> <span class="fu">mutate</span>(comparison_df, <span class="st">'% different'</span> <span class="ot">=</span> <span class="fu">round</span>((model4<span class="sc">/</span>cv_model <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">3</span>))</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(comparison_df) <span class="sc">%&gt;%</span> <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>), <span class="at">full_width=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">model4</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">cv_model</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">% different</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">RMSE</td>
+<td style="text-align: right;">0.1337621</td>
+<td style="text-align: right;">0.1337911</td>
+<td style="text-align: right;">-0.022</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R_squared</td>
+<td style="text-align: right;">0.9826166</td>
+<td style="text-align: right;">0.9826105</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>The average RMSE and R<sup>2</sup> of the fitted values in our cross validation are very similar to model4 which was fitted on the entire dataset. This suggests that our model is not overfit, and is suitable for accurate prediction of values not in the training set. Note that this only tells us that the structure of the model (i.e.&nbsp;the specific combination of predictor variables) is not overfit; it does not say anything about the actual coefficients and how stable they are (Remember that unstable coefficients can result from multicollinearity or datapoints with high leverage). To test for instability of coefficients we would perform bootstrap sampling and assess how stable the coefficients are across different training sets.what ab</p>
+<p>Okay, so we’ve determined that our model does a good job of predicting diamond price, and that there are no issues with collinearity (unstable coefficients) or overfitting. Let’s finally determine the extent to which changes in each predictor impact diamond price.</p>
+<p>Before we do this, let’s first discuss how coefficients of continuous predictor variables be interpreted in different forms of models:</p>
+<ol type="1">
+<li>y = x: the coefficient of x represents the unit change in y per unit change in x.</li>
+<li>log(y) = x: the coefficient represents the approximate percent change in y per unit change in x.</li>
+<li>log(y) = log(x): the coefficient represents the percent change in y per a 1% change in x.</li>
+</ol>
+<p>Note that these relationships hold regardless of the base of the log.</p>
+<p>Note also that these relationships are not valid in the contexto of factor variables!</p>
+<p>Given this, let’s calculate the % change in price given a 1% change in carat. This is easy to determine as it is just the coefficient associated with log(carat) in our model.</p>
+<p><br><strong>Get the coefficient estimate for carat and print its effect on price</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>carat_effect <span class="ot">&lt;-</span> <span class="fu">tidy</span>(model4) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"carat"</span>, term)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(estimate) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"A 1% increase in carat results in a "</span>, carat_effect, <span class="st">"% increase in diamond price"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "A 1% increase in carat results in a 1.88% increase in diamond price"</code></pre>
+</div>
+</div>
+<p>Next, let’s calculate the % effect for each of the factor variables. To understand what the coefficients mean for factor variables, consider this:</p>
+<ol type="1">
+<li>y = factor(x); Assume sum contrasts: The coefficient represents the unit difference in y between a factor level and the grand mean of all factor levels.</li>
+<li>log(y) = factor(x); Assume sum contrasts: The coefficient represents the log difference between a factor level and the grand mean. To get the percent difference from the grand mean: (exp(coefficient) - 1) × 100%.<br>
+</li>
+</ol>
+<p>Okay, so we see here that in order to get the proportional change in y associated with each factor, we need to exponentiate the factor coefficient and subtract 1.</p>
+<p><br><strong>Make a function and get model data using emmeans</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>get_factor_effects <span class="ot">&lt;-</span> <span class="cf">function</span>(model, factor_name) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">emmeans</span>(model, factor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">contrast</span>(<span class="st">"eff"</span>, <span class="at">adjust =</span> <span class="st">"none"</span>) <span class="sc">%&gt;%</span> <span class="co">#Set 'effect' contrast to get diff from grand mean</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(<span class="at">infer =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="st">"estimate(%)"</span> <span class="ot">=</span> <span class="fu">round</span>((<span class="fu">exp</span>(estimate)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>), </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">"low CI(%)"</span> <span class="ot">=</span> <span class="fu">round</span>((<span class="fu">exp</span>(lower.CL) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>           <span class="st">"upper_CI(%)"</span> <span class="ot">=</span> <span class="fu">round</span>((<span class="fu">exp</span>(upper.CL) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="st">"estimate(%)"</span>, <span class="st">"low CI(%)"</span>, <span class="st">"upper_CI(%)"</span>)}</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Call the function for each factor variable</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>cut_effects <span class="ot">&lt;-</span> <span class="fu">get_factor_effects</span>(model4, <span class="st">"cut"</span>)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>color_effects <span class="ot">&lt;-</span> <span class="fu">get_factor_effects</span>(model4, <span class="st">"color"</span>)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>clarity_effects <span class="ot">&lt;-</span> <span class="fu">get_factor_effects</span>(model4, <span class="st">"clarity"</span>)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a table with all of the effects data</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>effects_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cut_effects, color_effects, clarity_effects) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br><strong>Print a table with results</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(effects_df) <span class="sc">%&gt;%</span> <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>), <span class="at">full_width=</span><span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Cut Effects"</span>, <span class="dv">1</span>, <span class="fu">nrow</span>(cut_effects)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Color Effects"</span>, <span class="fu">nrow</span>(cut_effects)<span class="sc">+</span><span class="dv">1</span>, <span class="fu">nrow</span>(cut_effects)<span class="sc">+</span><span class="fu">nrow</span>(color_effects)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Clarity Effects"</span>, <span class="fu">nrow</span>(cut_effects)<span class="sc">+</span><span class="fu">nrow</span>(color_effects)<span class="sc">+</span><span class="dv">1</span>, <span class="fu">nrow</span>(effects_df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">estimate(%)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">low CI(%)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">upper_CI(%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd" data-grouplength="5">
+<td colspan="3" style="border-bottom: 1px solid"><strong>Cut Effects</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-9.48</td>
+<td style="text-align: right;">-9.97</td>
+<td style="text-align: right;">-8.99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-1.93</td>
+<td style="text-align: right;">-2.26</td>
+<td style="text-align: right;">-1.60</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">1.78</td>
+<td style="text-align: right;">1.52</td>
+<td style="text-align: right;">2.04</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">4.06</td>
+<td style="text-align: right;">3.81</td>
+<td style="text-align: right;">4.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">6.36</td>
+<td style="text-align: right;">6.12</td>
+<td style="text-align: right;">6.60</td>
+</tr>
+<tr class="odd" data-grouplength="7">
+<td colspan="3" style="border-bottom: 1px solid"><strong>Color Effects</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">22.90</td>
+<td style="text-align: right;">22.53</td>
+<td style="text-align: right;">23.27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">16.41</td>
+<td style="text-align: right;">16.11</td>
+<td style="text-align: right;">16.72</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">11.81</td>
+<td style="text-align: right;">11.52</td>
+<td style="text-align: right;">12.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">4.71</td>
+<td style="text-align: right;">4.45</td>
+<td style="text-align: right;">4.97</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-4.38</td>
+<td style="text-align: right;">-4.65</td>
+<td style="text-align: right;">-4.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-15.32</td>
+<td style="text-align: right;">-15.60</td>
+<td style="text-align: right;">-15.04</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-26.27</td>
+<td style="text-align: right;">-26.59</td>
+<td style="text-align: right;">-25.94</td>
+</tr>
+<tr class="odd" data-grouplength="8">
+<td colspan="3" style="border-bottom: 1px solid"><strong>Clarity Effects</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-50.68</td>
+<td style="text-align: right;">-51.11</td>
+<td style="text-align: right;">-50.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-24.34</td>
+<td style="text-align: right;">-24.57</td>
+<td style="text-align: right;">-24.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">-10.77</td>
+<td style="text-align: right;">-11.01</td>
+<td style="text-align: right;">-10.53</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">3.59</td>
+<td style="text-align: right;">3.31</td>
+<td style="text-align: right;">3.87</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">11.11</td>
+<td style="text-align: right;">10.77</td>
+<td style="text-align: right;">11.45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">27.17</td>
+<td style="text-align: right;">26.71</td>
+<td style="text-align: right;">27.64</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">36.58</td>
+<td style="text-align: right;">36.01</td>
+<td style="text-align: right;">37.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; padding-left: 2em;" data-indentlevel="1">50.20</td>
+<td style="text-align: right;">49.34</td>
+<td style="text-align: right;">51.07</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>No we can see the percent change associated with each level of each of the factor variables in our model. This shows us that, of these three factors, clarity has by far the largest effect on price.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
