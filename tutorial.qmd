@@ -1,5 +1,10 @@
 ---
-format: html
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-float: true
 editor: visual
 ---
 
@@ -851,4 +856,4 @@ kable(effects_df) %>% kable_styling(bootstrap_options = c("striped"), full_width
   
 ```
 
-No we can see the percent change associated with each level of each of the factor variables in our model. This shows us that, of these three factors, clarity has by far the largest effect on price.
+Now we can see the percent change associated with each level of each of the factor variables in our model. This shows us that, of these three factors, clarity has by far the largest effect on price.
