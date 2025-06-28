@@ -308,7 +308,7 @@ library(ggcorrplot) # for correlation plots
 library(ggExtra) # for marginal histograms
 library(caret) # for cross validation to assess overfitting  
 library(emmeans) # for calculating marginal means and contrasts from models
-library(ggfortify) # for making ggplot images from plot diag
+library(ggfortify) # for making ggplot images from plot diagnostics
 
 ```
 
